@@ -39,6 +39,33 @@ bool parse(Param* param, int argc, char* argv[]) {
 	return true;
 }
 
+void eth(struct libnet_ethernet_hdr *eth_hdr){
+	printf("source mac : ");
+	print_mac(eth_hdr->ether_shost);
+	printf("\n");
+	printf("dest mac : ");
+	print_mac(eth_hdr->ether_dhost);
+	printf("\n");
+}
+
+void iph(struct libnet_ipv4_hdr *ipv4hdr){
+	printf("source ip : ");
+	print_ip(ipv4hdr->ip_src);
+	printf("\n");
+	printf("dest ip : ");
+	print_ip(ipv4hdr->ip_dst);
+	printf("\n");	
+}
+
+void tcph(struct libnet_tcp_hdr *tcphdr){
+	printf("source port : ");
+	print_tcp(tcphdr -> th_sport);
+	printf("\n");
+	printf("dest port : ");
+	print_tcp(tcphdr -> th_dport);
+	printf("\n");
+}
+
 int main(int argc, char* argv[]) {
 	if (!parse(&param, argc, argv))
 		return -1;
@@ -73,32 +100,15 @@ int main(int argc, char* argv[]) {
 		tcp_off = tcp_off *4;
 		int tcp_data_offset = 14 + iplen + tcp_off;
 		int tcp_data_size = header->caplen - tcp_data_offset;
-		
+
 		if(ipv4hdr -> ip_p != 6){
 			printf("Is it TCP??\n");
 			continue;
 		}
 
-		printf("source mac : ");
-		print_mac(eth_hdr->ether_shost);
-		printf("\n");
-		printf("dest mac : ");
-		print_mac(eth_hdr->ether_dhost);
-		printf("\n");
-
-		printf("source ip : ");
-		print_ip(ipv4hdr->ip_src);
-		printf("\n");
-		printf("dest ip : ");
-		print_ip(ipv4hdr->ip_dst);
-		printf("\n");
-		
-		printf("source port : ");
-		print_tcp(tcphdr -> th_sport);
-		printf("\n");
-		printf("dest port : ");
-		print_tcp(tcphdr -> th_dport);
-		printf("\n");
+		eth(eth_hdr);
+		iph(ipv4hdr);
+		tcph(tcphdr);
 
 		printf("TCP Data : \n");
 		if(tcp_data_size != 0){
