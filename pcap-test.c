@@ -9,14 +9,6 @@ void print_mac(u_int8_t *m){
 	printf("%02x:%02x:%02x:%02x:%02x:%02x", m[0], m[1], m[2], m[3], m[4], m[5]);
 }
 
-void print_ip(struct in_addr addr) {
-	printf("%s", inet_ntoa(addr));
-}
-
-void print_tcp(u_int16_t m){
-	printf("%u",ntohs(m));
-}
-
 void usage() {
 	printf("syntax: pcap-test <interface>\n");
 	printf("sample: pcap-test wlan0\n");
@@ -49,21 +41,13 @@ void eth(struct libnet_ethernet_hdr *eth_hdr){
 }
 
 void iph(struct libnet_ipv4_hdr *ipv4hdr){
-	printf("source ip : ");
-	print_ip(ipv4hdr->ip_src);
-	printf("\n");
-	printf("dest ip : ");
-	print_ip(ipv4hdr->ip_dst);
-	printf("\n");	
+	printf("source ip : %s\n",inet_ntoa(ipv4hdr->ip_src));
+	printf("dest ip : %s\n",inet_ntoa(ipv4hdr->ip_dst));
 }
 
 void tcph(struct libnet_tcp_hdr *tcphdr){
-	printf("source port : ");
-	print_tcp(tcphdr -> th_sport);
-	printf("\n");
-	printf("dest port : ");
-	print_tcp(tcphdr -> th_dport);
-	printf("\n");
+	printf("source port : %u\n",ntohs(tcphdr->th_sport));
+	printf("dest port : %u\n",ntohs(tcphdr->th_dport));
 }
 
 int main(int argc, char* argv[]) {
